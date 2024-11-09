@@ -1,0 +1,91 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id                Int        @id @default(autoincrement())
+    email             String     @unique
+    name              String
+    password          String
+    emailVerifiedAt   String?
+    verificationToken String?
+    resetPassword     String?
+    isActive          Boolean?   @default(false)
+    userRole          UserRole[]
+    createdAt         String?
+    updatedAt         String?
+}
+
+model Role {
+    id       Int        @id @default(autoincrement())
+    name     String     @unique
+    userRole UserRole[]
+}
+
+model UserRole {
+    user   User @relation(fields: [userId], references: [id])
+    userId Int
+
+    role   Role @relation(fields: [roleId], references: [id])
+    roleId Int
+
+    @@id([userId, roleId])
+}
+
+model Locations {
+    id        Int    @id @default(autoincrement())
+    name      String
+    address   String
+    shortName String
+    createdAt String
+    updatedAt String
+}
+
+model ShortCourse {
+    id                Int     @id @default(autoincrement())
+    name              String
+    courseCode        String
+    practicalDuration String
+    currency          String  @default("AUD")
+    remark            String?
+    imageName         String?
+    imagePath         String?
+    createdAt         String
+    updatedAt         String
+}
+
+model ShortCourseBooking {
+    id              Int     @id @default(autoincrement())
+    shortCourseId   Int
+    locationId      Int
+    bookingDatetime String
+    price           String
+    isActive        Boolean @default(false)
+    createdBy       Int
+    updatedBy       Int
+    createdAt       String
+    updatedAt       String
+}
+
+model Booking {
+    id                Int     @id @default(autoincrement())
+    firstName         String
+    lastName          String
+    middleName        String
+    email             String
+    dob               String
+    gender            String
+    usi               String
+    mobile            String
+    phone             String?
+    shortCourseBookId Int
+    pi                String
+    pm                String
+    createdAt         String
+    updatedAt         String
+}
