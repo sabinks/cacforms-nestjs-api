@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Res,
   UseGuards,
   UsePipes,
@@ -39,8 +40,19 @@ export class ShortCourseController {
   }
 
   @Get()
-  findAll() {
-    return this.shortCourseService.findAll();
+  findAll(
+    @Query('perPage') perPage: number,
+    @Query('page') page: number,
+    @Query('order') order: string,
+    @Query('orderBy') orderBy: string,
+    @Query('search') search: string,
+  ) {
+    return this.shortCourseService.findAll({
+      where: {},
+      orderBy: { [orderBy]: order },
+      perPage,
+      page,
+    });
   }
 
   @Get(':id')

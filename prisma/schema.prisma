@@ -8,17 +8,25 @@ datasource db {
 }
 
 model User {
-    id                Int        @id @default(autoincrement())
-    email             String     @unique
+    id                Int            @id @default(autoincrement())
+    email             String         @unique
     name              String
     password          String
     emailVerifiedAt   String?
     verificationToken String?
-    resetPassword     String?
-    isActive          Boolean?   @default(false)
+    resetPassword     ResetPassword?
+    isActive          Boolean?       @default(false)
     userRole          UserRole[]
     createdAt         String?
     updatedAt         String?
+}
+
+model ResetPassword {
+    id        Int     @id @default(autoincrement())
+    userId    Int     @unique
+    token     String  @default("")
+    user      User    @relation(fields: [userId], references: [id])
+    tokenUsed Boolean @default(false)
 }
 
 model Role {
