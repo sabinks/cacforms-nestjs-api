@@ -3,7 +3,8 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { join } from 'path';
 import { AppController } from './app.controller';
@@ -12,11 +13,13 @@ import { AuthModule } from './auth/auth.module';
 import { LoginModule } from './auth/login/login.module';
 import { ForgotPasswordModule } from './forgot-password/forgot-password.module';
 import { MailModule } from './mail/mail.module';
+import { MailService } from './mail/mail.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { ResetPasswordModule } from './reset-password/reset-password.module';
 import { ShortCourseBookingModule } from './short-course-booking/short-course-booking.module';
 import { ShortCourseModule } from './short-course/short-course.module';
 import { UsersModule } from './users/users.module';
+import { StripeModule } from './stripe/stripe.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -32,6 +35,10 @@ import { UsersModule } from './users/users.module';
       secret: process.env.AUTH_SECRET,
       signOptions: { expiresIn: '240h' },
     }),
+    StripeModule,
+    StripeModule.forRoot(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2024-10-28.acacia',
+    }),
     ThrottlerModule.forRoot([
       {
         ttl: 60000,
@@ -39,6 +46,23 @@ import { UsersModule } from './users/users.module';
       },
     ]),
     ShortCourseModule,
+    ClientsModule.register([
+      {
+        name: 'MAIL_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [
+            process.env.NODE_ENV == 'development'
+              ? 'amqp://localhost:5672'
+              : `${process.env.RBMQ_URL}`,
+          ],
+          queue: 'mail_queue',
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
+    ]),
     MailerModule.forRoot({
       transport: {
         host: process.env.EMAIL_HOST,
@@ -68,6 +92,9 @@ import { UsersModule } from './users/users.module';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
+    MailService,
+    JwtService,
   ],
+  exports: [MailService, JwtService],
 })
 export class AppModule {}

@@ -19,7 +19,7 @@ export class ResetPasswordService {
       where: { userId: userExist.id, token: resetPasswordDto.token },
     });
     if (!tokenExists) {
-      throw new NotFoundException();
+      throw new NotFoundException('Token does not exist!');
     }
     if (tokenExists.tokenUsed) {
       throw new Exception('Token used already, cannot proceed further');
