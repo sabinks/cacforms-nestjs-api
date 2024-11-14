@@ -55,29 +55,33 @@ model Locations {
 }
 
 model ShortCourse {
-    id                Int     @id @default(autoincrement())
-    name              String
-    courseCode        String
-    practicalDuration String
-    currency          String  @default("AUD")
-    remark            String?
-    imageName         String?
-    imagePath         String?
-    createdAt         String
-    updatedAt         String
+    id                 Int                  @id @default(autoincrement())
+    name               String
+    courseCode         String
+    practicalDuration  String
+    currency           String               @default("AUD")
+    remark             String?
+    imageName          String?
+    imagePath          String?
+    createdAt          String
+    updatedAt          String
+    shortCourseBooking ShortCourseBooking[]
 }
 
 model ShortCourseBooking {
-    id              Int     @id @default(autoincrement())
+    id              Int         @id @default(autoincrement())
     shortCourseId   Int
     locationId      Int
     bookingDatetime String
-    price           String
-    isActive        Boolean @default(false)
+    price           Decimal
+    isActive        Boolean     @default(false)
     createdBy       Int
     updatedBy       Int
     createdAt       String
     updatedAt       String
+    shortCourse     ShortCourse @relation(fields: [shortCourseId], references: [id])
+
+    @@map("short_course_booking")
 }
 
 model Booking {

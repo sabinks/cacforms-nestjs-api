@@ -3,7 +3,7 @@ import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 async function userMain() {
-  const roles = ['superadmin', 'admin', 'partner', 'member'];
+  const roles = ['superadmin', 'admin', 'agent', 'student'];
   roles.forEach(async (role) => {
     const roleExists = await prisma.role.findFirst({
       where: {
@@ -16,7 +16,7 @@ async function userMain() {
       });
     }
   });
-  const hashPassword = await bcrypt.hash('pass1234', 12);
+  const hashPassword = await bcrypt.hash('P@ss1234', 12);
   const role = await prisma.role.findFirst({ where: { name: 'superadmin' } });
   const user = await prisma.user.findFirst({
     where: { email: 'superadmin@mail.com' },

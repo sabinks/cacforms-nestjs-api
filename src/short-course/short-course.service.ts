@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PaginateFunction, paginator } from 'src/pagination/paginator';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -52,15 +52,42 @@ export class ShortCourseService {
     );
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} shortCourse`;
+  async findOne(id: number) {
+    const shortCourse = await this.prisma.shortCourse.findFirst({
+      where: { id },
+    });
+
+    if (!shortCourse) {
+      throw new HttpException('Short course not found!', 404);
+    }
+    return shortCourse;
   }
 
   update(id: number, updateShortCourseDto: UpdateShortCourseDto) {
     return `This action updates a #${id} shortCourse`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} shortCourse`;
+  async remove(id: number) {
+    const shortCourse = await this.prisma.shortCourse.findFirst({
+      where: { id },
+      include: {
+        shortCourseBooking: {
+          where: { shortCourseId: id },
+        },
+      },
+    });
+    if (!shortCourse) {
+      throw new HttpException(
+        'Short course used for booking, could not deleet!',
+        404,
+      );
+    }
+    if (shortCourse.shortCourseBooking.length > 0) {
+      throw new HttpException(
+        'Short course used for booking, could not deleet!',
+        400,
+      );
+    }
+    await this.prisma.shortCourse.delete({ where: { id } });
   }
 }

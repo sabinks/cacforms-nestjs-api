@@ -20,10 +20,13 @@ import { ShortCourseBookingModule } from './short-course-booking/short-course-bo
 import { ShortCourseModule } from './short-course/short-course.module';
 import { UsersModule } from './users/users.module';
 import { StripeModule } from './stripe/stripe.module';
+import { RegisterModule } from './auth/register/register.module';
+import { EmailVerificationModule } from './email-verification/email-verification.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
     AuthModule,
+    RegisterModule,
     UsersModule,
     PrismaModule,
     LoginModule,
@@ -84,6 +87,7 @@ import { StripeModule } from './stripe/stripe.module';
       },
     }),
     ShortCourseBookingModule,
+    EmailVerificationModule,
   ],
   controllers: [AppController],
   providers: [

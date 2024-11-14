@@ -3,6 +3,7 @@ import {
   Catch,
   ExceptionFilter,
   ForbiddenException,
+  NotFoundException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 

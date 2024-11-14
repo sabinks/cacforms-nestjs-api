@@ -2,11 +2,11 @@ import { UnprocessableEntityException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module';
-import { HttpExceptionFilter } from './exceptions/http-exception.filter';
+import { AllExceptionFilter } from './exceptions/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new AllExceptionFilter());
   app.useGlobalPipes(
     new ValidationPipe({
       exceptionFactory: (errors) => {

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
+import { RegisterService } from './register.service';
+import { RegisterController } from './register.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
-import { ResetPasswordController } from './reset-password.controller';
-import { ResetPasswordService } from './reset-password.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
@@ -25,7 +25,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       },
     ]),
   ],
-  controllers: [ResetPasswordController],
-  providers: [ResetPasswordService],
+  controllers: [RegisterController],
+  providers: [RegisterService],
 })
-export class ResetPasswordModule {}
+export class RegisterModule {}

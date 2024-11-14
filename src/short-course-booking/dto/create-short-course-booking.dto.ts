@@ -2,11 +2,9 @@ import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateShortCourseBookingDto {
   @IsNotEmpty()
-  @IsString()
   shortCourseId: number;
 
   @IsNotEmpty()
-  @IsString()
   locationId: number;
 
   @IsNotEmpty()
@@ -14,7 +12,6 @@ export class CreateShortCourseBookingDto {
   bookingDatetime: string;
 
   @IsNotEmpty()
-  @IsString()
   price: number;
 
   isActive: boolean;

@@ -69,7 +69,8 @@ export class ShortCourseController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.shortCourseService.remove(+id);
+  remove(@Param('id') id: string, @Res() res: Response) {
+    this.shortCourseService.remove(+id);
+    return res.status(HttpStatus.NO_CONTENT).send('Short course deleted!');
   }
 }
