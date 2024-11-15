@@ -80,24 +80,28 @@ model ShortCourseBooking {
     createdAt       String
     updatedAt       String
     shortCourse     ShortCourse @relation(fields: [shortCourseId], references: [id])
+    booking         Booking[]
 
     @@map("short_course_booking")
 }
 
 model Booking {
-    id                Int     @id @default(autoincrement())
-    firstName         String
-    lastName          String
-    middleName        String
-    email             String
-    dob               String
-    gender            String
-    usi               String
-    mobile            String
-    phone             String?
-    shortCourseBookId Int
-    pi                String
-    pm                String
-    createdAt         String
-    updatedAt         String
+    id                   Int                 @id @default(autoincrement())
+    firstName            String
+    lastName             String
+    middleName           String
+    email                String
+    dob                  String
+    gender               String
+    usi                  String
+    mobile               String
+    phone                String?
+    shortCourseBookId    Int
+    pi                   String
+    pm                   String
+    data                 Json?
+    createdAt            String
+    updatedAt            String
+    ShortCourseBooking   ShortCourseBooking? @relation(fields: [shortCourseBookingId], references: [id])
+    shortCourseBookingId Int?
 }

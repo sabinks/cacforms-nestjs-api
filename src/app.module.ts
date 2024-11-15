@@ -22,6 +22,8 @@ import { UsersModule } from './users/users.module';
 import { StripeModule } from './stripe/stripe.module';
 import { RegisterModule } from './auth/register/register.module';
 import { EmailVerificationModule } from './email-verification/email-verification.module';
+import { BookingModule } from './booking/booking.module';
+import { UserBookingModule } from './user-booking/user-booking.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -88,6 +90,8 @@ import { EmailVerificationModule } from './email-verification/email-verification
     }),
     ShortCourseBookingModule,
     EmailVerificationModule,
+    BookingModule,
+    UserBookingModule,
   ],
   controllers: [AppController],
   providers: [

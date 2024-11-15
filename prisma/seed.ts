@@ -3,19 +3,28 @@ import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 async function userMain() {
-  const roles = ['superadmin', 'admin', 'agent', 'student'];
-  roles.forEach(async (role) => {
-    const roleExists = await prisma.role.findFirst({
-      where: {
-        name: role,
-      },
-    });
-    if (!roleExists) {
-      await prisma.role.create({
-        data: { name: role },
-      });
-    }
+  //   const roles = ['superadmin', 'admin', 'agent', 'student'];
+  await prisma.role.createMany({
+    data: [
+      { name: 'superadmin' },
+      { name: 'admin' },
+      { name: 'agent' },
+      { name: 'student' },
+    ],
+    skipDuplicates: true,
   });
+  //   roles.forEach(async (role) => {
+  //     const roleExists = await prisma.role.findFirst({
+  //       where: {
+  //         name: role,
+  //       },
+  //     });
+  //     if (!roleExists) {
+  //       await prisma.role.create({
+  //         data: { name: role },
+  //       });
+  //     }
+  //   });
   const hashPassword = await bcrypt.hash('P@ss1234', 12);
   const role = await prisma.role.findFirst({ where: { name: 'superadmin' } });
   const user = await prisma.user.findFirst({
