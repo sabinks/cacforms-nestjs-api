@@ -1,5 +1,6 @@
 import {
   ArgumentsHost,
+  BadRequestException,
   Catch,
   ExceptionFilter,
   HttpException,
@@ -9,7 +10,12 @@ import {
 import { format } from 'date-fns';
 import { Request, Response } from 'express';
 
-@Catch(HttpException, NotFoundException, MethodNotAllowedException)
+@Catch(
+  HttpException,
+  NotFoundException,
+  BadRequestException,
+  MethodNotAllowedException,
+)
 export class AllExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();

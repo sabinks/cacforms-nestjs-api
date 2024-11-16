@@ -42,18 +42,18 @@ export class StripeService {
     //     if (!user) {
     //       throw new NotFoundException('User not found');
     //     }
-    // let paymentIntent = await this.stripe.paymentIntents.create({
-    //   currency: process.env.STRIPE_CURRENCY,
-    //   amount: amt * 100,
-    //   customer: cusId,
-    //   metadata: {
-    //     name: (await user).username,
-    //     email: (await user).email,
-    //     service: 'Book Appointment Payment',
-    //     status: 'Completed',
-    //   },
-    // });
-    // return paymentIntent;
+    const paymentIntent = await this.stripe.paymentIntents.create({
+      currency: process.env.STRIPE_CURRENCY,
+      amount: amt * 100,
+      customer: cusId,
+      metadata: {
+        // name: (await user).name,
+        // email: (await user).email,
+        service: 'Book Appointment Payment',
+        status: 'Completed',
+      },
+    });
+    return paymentIntent;
   }
 
   async paymentSuccess(paymentId, cusId, refId) {
@@ -86,7 +86,7 @@ export class StripeService {
   }
 
   async cancelStripeIntent(paymentIntent: string) {
-    // let status = await this.stripe.paymentIntents.cancel(paymentIntent);
-    // return status;
+    let status = await this.stripe.paymentIntents.cancel(paymentIntent);
+    return status;
   }
 }
