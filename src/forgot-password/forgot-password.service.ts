@@ -9,7 +9,6 @@ import { ForgotPasswordDto } from './forgot-password.dto';
 export class ForgotPasswordService {
   constructor(
     private prisma: PrismaService,
-    private mailService: MailService,
     @Inject('MAIL_SERVICE') private client: ClientProxy,
   ) {}
   async resetPassword(forgotPassword: ForgotPasswordDto) {

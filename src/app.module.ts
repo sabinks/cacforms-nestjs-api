@@ -24,6 +24,9 @@ import { RegisterModule } from './auth/register/register.module';
 import { EmailVerificationModule } from './email-verification/email-verification.module';
 import { BookingModule } from './booking/booking.module';
 import { UserBookingModule } from './user-booking/user-booking.module';
+import { LocationModule } from './next/location/location.module';
+import { PrismaService } from './prisma/prisma.service';
+import { ShortCourseListModule } from './next/short-course-list/short-course-list.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -42,7 +45,7 @@ import { UserBookingModule } from './user-booking/user-booking.module';
     }),
     StripeModule,
     StripeModule.forRoot(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2024-10-28.acacia',
+      apiVersion: '2024-11-20.acacia',
     }),
     ThrottlerModule.forRoot([
       {
@@ -92,6 +95,8 @@ import { UserBookingModule } from './user-booking/user-booking.module';
     EmailVerificationModule,
     BookingModule,
     UserBookingModule,
+    LocationModule,
+    ShortCourseListModule,
   ],
   controllers: [AppController],
   providers: [

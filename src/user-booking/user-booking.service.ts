@@ -1,12 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateUserBookingDto } from './dto/create-user-booking.dto';
 import { UpdateUserBookingDto } from './dto/update-user-booking.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { newDate } from 'src/utils/helpers';
+import { ClientProxy } from '@nestjs/microservices';
+import * as moment from 'moment';
 
 @Injectable()
 export class UserBookingService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Inject('MAIL_SERVICE') private client: ClientProxy,
+  ) {}
   async create(createUserBookingDto: CreateUserBookingDto) {
     const {
       firstName,
@@ -40,6 +45,32 @@ export class UserBookingService {
         updatedAt: newDate(),
       },
     });
+    const shortcourseBooking = await this.prisma.shortCourseBooking.findFirst({
+      where: { id: shortCourseBookId },
+      include: {
+        shortCourse: true,
+      },
+    });
+
+    const name = `${firstName} ${middleName} ${lastName}`;
+
+    const payload = {
+      email,
+      name,
+      shortcourseBooking: {
+        ...shortcourseBooking,
+        shortCourse: {
+          ...shortcourseBooking.shortCourse,
+          bookingDateTime: moment(
+            shortcourseBooking.bookingDatetime,
+            'YYYY-MM-DD HH:mm:ss',
+          ).format('YYYY-MM-DD h:mm:ss A'),
+        },
+      },
+    };
+    console.log(payload);
+
+    this.client.emit('shortcourse-booking-booked', payload);
   }
 
   findAll() {

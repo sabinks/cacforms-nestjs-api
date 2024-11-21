@@ -46,12 +46,13 @@ model UserRole {
 }
 
 model Locations {
-    id        Int    @id @default(autoincrement())
-    name      String
-    address   String
-    shortName String
-    createdAt String
-    updatedAt String
+    id                 Int                  @id @default(autoincrement())
+    name               String
+    address            String
+    shortName          String
+    createdAt          String
+    updatedAt          String
+    ShortCourseBooking ShortCourseBooking[]
 }
 
 model ShortCourse {
@@ -65,6 +66,7 @@ model ShortCourse {
     imagePath          String?
     createdAt          String
     updatedAt          String
+    isActive           Boolean              @default(false)
     shortCourseBooking ShortCourseBooking[]
 }
 
@@ -72,8 +74,9 @@ model ShortCourseBooking {
     id              Int         @id @default(autoincrement())
     shortCourseId   Int
     locationId      Int
+    location        Locations   @relation(fields: [locationId], references: [id])
     bookingDatetime String
-    price           Decimal
+    price           Decimal     @db.Decimal(6, 2)
     isActive        Boolean     @default(false)
     createdBy       Int
     updatedBy       Int
@@ -82,7 +85,7 @@ model ShortCourseBooking {
     shortCourse     ShortCourse @relation(fields: [shortCourseId], references: [id])
     booking         Booking[]
 
-    @@map("short_course_booking")
+    // @@map("short_course_booking")
 }
 
 model Booking {

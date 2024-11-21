@@ -13,6 +13,7 @@ import { UserBookingService } from './user-booking.service';
 import { CreateUserBookingDto } from './dto/create-user-booking.dto';
 import { UpdateUserBookingDto } from './dto/update-user-booking.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Response } from 'express';
 
 @Controller('api/user-booking')
 export class UserBookingController {
@@ -20,13 +21,18 @@ export class UserBookingController {
 
   @Post()
   @UseInterceptors(FileInterceptor('signature'))
-  create(@Body() createUserBookingDto: CreateUserBookingDto, @Res() res) {
+  create(
+    @Body() createUserBookingDto: CreateUserBookingDto,
+    @Res() response: Response,
+  ) {
     const { validateOnlyTest } = createUserBookingDto;
     if (validateOnlyTest) {
-      return res.status(200).send({ message: 'validationOk' });
+      return response.status(200).send({ message: 'validationOk' });
     }
     this.userBookingService.create(createUserBookingDto);
-    return res.status(201).send({ message: 'Short course booking completed!' });
+    return response
+      .status(201)
+      .send({ message: 'Short course booking completed!' });
   }
 
   @Get()

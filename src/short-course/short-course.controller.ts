@@ -31,10 +31,10 @@ export class ShortCourseController {
   @UsePipes(ValidationPipe)
   create(
     @Body() createShortCourseDto: CreateShortCourseDto,
-    @Res() res: Response,
+    @Res() response: Response,
   ) {
     this.shortCourseService.create(createShortCourseDto);
-    return res.status(HttpStatus.OK).json({
+    return response.status(HttpStatus.OK).json({
       message: 'Short Course Created!',
     });
   }
@@ -64,13 +64,17 @@ export class ShortCourseController {
   update(
     @Param('id') id: string,
     @Body() updateShortCourseDto: UpdateShortCourseDto,
+    @Res() response: Response,
   ) {
-    return this.shortCourseService.update(+id, updateShortCourseDto);
+    this.shortCourseService.update(+id, updateShortCourseDto);
+    return response.status(HttpStatus.OK).json({
+      message: 'Short Course Updated!',
+    });
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Res() res: Response) {
+  remove(@Param('id') id: string, @Res() response: Response) {
     this.shortCourseService.remove(+id);
-    return res.status(HttpStatus.NO_CONTENT).send('Short course deleted!');
+    return response.status(HttpStatus.NO_CONTENT).send('Short course deleted!');
   }
 }
