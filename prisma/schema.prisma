@@ -103,8 +103,20 @@ model Booking {
     pi                   String
     pm                   String
     data                 Json?
+    documentType         String              @default("Other Documents")
     createdAt            String
     updatedAt            String
     ShortCourseBooking   ShortCourseBooking? @relation(fields: [shortCourseBookingId], references: [id])
     shortCourseBookingId Int?
+
+    bookingDocument BookingDocument[]
+}
+
+model BookingDocument {
+    id           Int     @id @default(autoincrement())
+    bookingId    Int
+    originalName String
+    imageName    String?
+    imagePath    String?
+    Booking      Booking @relation(fields: [bookingId], references: [id])
 }

@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { newDate } from 'src/utils/helpers';
 import { ClientProxy } from '@nestjs/microservices';
 import * as moment from 'moment';
+import { unlinkSync } from 'fs';
 
 @Injectable()
 export class UserBookingService {
@@ -12,7 +13,7 @@ export class UserBookingService {
     private prisma: PrismaService,
     @Inject('MAIL_SERVICE') private client: ClientProxy,
   ) {}
-  async create(createUserBookingDto: CreateUserBookingDto) {
+  async create(files: any = [], createUserBookingDto: CreateUserBookingDto) {
     const {
       firstName,
       middleName,
@@ -25,7 +26,9 @@ export class UserBookingService {
       phone,
       shortCourseBookId,
     } = createUserBookingDto;
-    await this.prisma.booking.create({
+    const newFiles = [];
+
+    const booking = await this.prisma.booking.create({
       data: {
         firstName,
         middleName,
@@ -36,8 +39,8 @@ export class UserBookingService {
         usi,
         mobile,
         phone,
-        shortCourseBookId,
-        shortCourseBookingId: shortCourseBookId,
+        shortCourseBookId: parseInt(shortCourseBookId),
+        shortCourseBookingId: parseInt(shortCourseBookId),
         pi: '123',
         pm: '123',
         data: { ...createUserBookingDto },
@@ -45,13 +48,24 @@ export class UserBookingService {
         updatedAt: newDate(),
       },
     });
+    files.file.forEach((file) => {
+      const fileResponse = {
+        originalName: file.originalname,
+        imageName: file.filename,
+        imagePath: file.path,
+        bookingId: booking.id,
+      };
+      newFiles.push(fileResponse);
+    });
+    await this.prisma.bookingDocument.createMany({
+      data: newFiles,
+    });
     const shortcourseBooking = await this.prisma.shortCourseBooking.findFirst({
-      where: { id: shortCourseBookId },
+      where: { id: parseInt(shortCourseBookId) },
       include: {
         shortCourse: true,
       },
     });
-
     const name = `${firstName} ${middleName} ${lastName}`;
 
     const payload = {
@@ -68,7 +82,6 @@ export class UserBookingService {
         },
       },
     };
-    console.log(payload);
 
     this.client.emit('shortcourse-booking-booked', payload);
   }

@@ -23,9 +23,8 @@ import { StripeModule } from './stripe/stripe.module';
 import { RegisterModule } from './auth/register/register.module';
 import { EmailVerificationModule } from './email-verification/email-verification.module';
 import { BookingModule } from './booking/booking.module';
-import { UserBookingModule } from './user-booking/user-booking.module';
+import { UserBookingModule } from './next/user-booking/user-booking.module';
 import { LocationModule } from './next/location/location.module';
-import { PrismaService } from './prisma/prisma.service';
 import { ShortCourseListModule } from './next/short-course-list/short-course-list.module';
 @Module({
   imports: [

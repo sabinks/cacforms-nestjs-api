@@ -1,4 +1,8 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PaginateFunction, paginator } from 'src/pagination/paginator';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -11,7 +15,7 @@ const paginate: PaginateFunction = paginator({ perPage: 10 });
 @Injectable()
 export class ShortCourseService {
   constructor(private prisma: PrismaService) {}
-  async create(createShortCourseDto: CreateShortCourseDto) {
+  async create(files, createShortCourseDto: CreateShortCourseDto) {
     const { name, courseCode, practicalDuration, currency, remark } =
       createShortCourseDto;
 
@@ -63,8 +67,19 @@ export class ShortCourseService {
     return shortCourse;
   }
 
-  update(id: number, updateShortCourseDto: UpdateShortCourseDto) {
-    return `This action updates a #${id} shortCourse`;
+  async update(id: number, updateShortCourseDto: UpdateShortCourseDto) {
+    const { name, courseCode, currency, practicalDuration, remark } =
+      updateShortCourseDto;
+    await this.prisma.shortCourse.update({
+      where: { id },
+      data: {
+        name,
+        courseCode,
+        currency,
+        practicalDuration,
+        remark,
+      },
+    });
   }
 
   async remove(id: number) {
@@ -76,18 +91,32 @@ export class ShortCourseService {
         },
       },
     });
-    if (!shortCourse) {
-      throw new HttpException(
-        'Short course used for booking, could not deleet!',
-        404,
-      );
+    try {
+      if (!shortCourse) {
+        throw new HttpException('Short course not found!', 404);
+      }
+      if (shortCourse.shortCourseBooking.length > 0) {
+        throw new HttpException(
+          'Short course used for booking, could not delete!',
+          400,
+        );
+      }
+      await this.prisma.shortCourse.delete({ where: { id } });
+    } catch (error) {
+      throw error.status == undefined
+        ? new InternalServerErrorException()
+        : new HttpException(error, error.status);
     }
-    if (shortCourse.shortCourseBooking.length > 0) {
-      throw new HttpException(
-        'Short course used for booking, could not deleet!',
-        400,
-      );
-    }
-    await this.prisma.shortCourse.delete({ where: { id } });
+  }
+
+  async changeStatus(id: number, body: any) {
+    await this.prisma.shortCourse.update({
+      where: {
+        id,
+      },
+      data: {
+        isActive: body.isActive,
+      },
+    });
   }
 }

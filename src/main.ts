@@ -8,13 +8,16 @@ import { InternalDisabledLogger } from './logger/ConsoleLogger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: new InternalDisabledLogger(),
+    // rawBody: true,
+    bodyParser: true,
   });
   app.useGlobalFilters(new AllExceptionFilter());
   app.useGlobalPipes(
     new ValidationPipe({
+      transform: true, // Transform is recomended configuration for avoind issues with arrays of files transformations
+    }),
+    new ValidationPipe({
       exceptionFactory: (errors) => {
-        console.log(errors);
-
         const result = errors.map((error) => ({
           property: error.property,
           message: error.constraints[Object.keys(error.constraints)[0]],

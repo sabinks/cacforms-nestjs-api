@@ -1,9 +1,4 @@
-import {
-  ConflictException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { CreateShortCourseBookingDto } from './dto/create-short-course-booking.dto';
 import { UpdateShortCourseBookingDto } from './dto/update-short-course-booking.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -97,11 +92,30 @@ export class ShortCourseBookingService {
     return booking;
   }
 
-  update(id: number, updateShortCourseBookingDto: UpdateShortCourseBookingDto) {
-    return `This action updates a #${id} shortCourseBooking`;
+  async update(
+    id: number,
+    updateShortCourseBookingDto: UpdateShortCourseBookingDto,
+  ) {
+    const { locationId, bookingDatetime, price, isActive } =
+      updateShortCourseBookingDto;
+    await this.prisma.shortCourseBooking.update({
+      where: { id },
+      data: { locationId, bookingDatetime, price, isActive },
+    });
   }
 
   remove(id: number) {
     return `This action removes a #${id} shortCourseBooking`;
+  }
+
+  async changeStatus(id: number, body: any) {
+    await this.prisma.shortCourseBooking.update({
+      where: {
+        id,
+      },
+      data: {
+        isActive: body.isActive,
+      },
+    });
   }
 }

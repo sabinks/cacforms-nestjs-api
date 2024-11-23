@@ -26,6 +26,7 @@ export class BookingService {
       this.prisma.booking,
       {
         where,
+        include: { bookingDocument: true },
         orderBy,
       },
       {

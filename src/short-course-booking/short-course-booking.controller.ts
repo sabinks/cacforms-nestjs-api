@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -18,7 +19,7 @@ import { UpdateShortCourseBookingDto } from './dto/update-short-course-booking.d
 import { ShortCourseBookingService } from './short-course-booking.service';
 import { AuthGuard } from '@nestjs/passport';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
-import { Response } from 'express';
+import { response, Response } from 'express';
 
 @Controller('api/short-course-booking')
 export class ShortCourseBookingController {
@@ -68,15 +69,28 @@ export class ShortCourseBookingController {
   update(
     @Param('id') id: string,
     @Body() updateShortCourseBookingDto: UpdateShortCourseBookingDto,
+    @Res() response: Response,
   ) {
-    return this.shortCourseBookingService.update(
-      +id,
-      updateShortCourseBookingDto,
-    );
+    this.shortCourseBookingService.update(+id, updateShortCourseBookingDto);
+    return response.status(HttpStatus.OK).json({
+      message: 'Short Course Updated!',
+    });
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.shortCourseBookingService.remove(+id);
+  }
+
+  @Post(':id/change-status')
+  changeStatus(
+    @Param('id') id: string,
+    @Body() body: any,
+    @Res() response: Response,
+  ) {
+    this.shortCourseBookingService.changeStatus(+id, body);
+    return response.status(HttpStatus.OK).json({
+      message: 'Short Course Updated!',
+    });
   }
 }

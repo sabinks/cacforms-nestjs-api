@@ -29,13 +29,11 @@ export class CreateUserBookingDto {
   street: string;
 
   @IsNotEmpty()
-  postCode: string;
-
-  @IsNotEmpty()
   suburb: string;
-
   @IsNotEmpty()
   state: string;
+  @IsNotEmpty()
+  postCode: string;
 
   phone: string;
 
@@ -60,13 +58,13 @@ export class CreateUserBookingDto {
   //signature check
 
   @IsNotEmpty()
-  shortCourseBookId: number;
+  shortCourseBookId: string;
 
-  validateOnlyTest: boolean;
+  validateOnlyTest: string;
 
-  @IsNotEmpty()
-  pi: string;
+  //   @IsNotEmpty()
+  //   pi: string;
 
-  @IsNotEmpty()
-  pm: string;
+  //   @IsNotEmpty()
+  //   pm: string;
 }

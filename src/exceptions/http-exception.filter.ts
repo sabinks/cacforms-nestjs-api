@@ -6,16 +6,12 @@ import {
   HttpException,
   MethodNotAllowedException,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { format } from 'date-fns';
 import { Request, Response } from 'express';
 
-@Catch(
-  HttpException,
-  NotFoundException,
-  BadRequestException,
-  MethodNotAllowedException,
-)
+@Catch(HttpException, BadRequestException)
 export class AllExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -24,8 +20,7 @@ export class AllExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
 
     response.status(status).json({
-      message: exception.message,
-      status,
+      response: status == 422 ? exception.getResponse() : exception.message,
       timestamp: format(new Date(), 'yyyy-MM-dd hh:mm:ss'),
       path: request.url,
     });

@@ -8,28 +8,39 @@ import {
   Delete,
   UseInterceptors,
   Res,
+  UploadedFile,
+  UsePipes,
+  ValidationPipe,
+  UploadedFiles,
 } from '@nestjs/common';
 import { UserBookingService } from './user-booking.service';
 import { CreateUserBookingDto } from './dto/create-user-booking.dto';
 import { UpdateUserBookingDto } from './dto/update-user-booking.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+// import { FileInterceptor, NoFilesInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
+import {
+  FileFieldsInterceptor,
+  FileInterceptor,
+} from '@nestjs/platform-express';
 
-@Controller('api/user-booking')
+@Controller('/api/next/user-booking')
 export class UserBookingController {
   constructor(private readonly userBookingService: UserBookingService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('signature'))
+  @UsePipes(new ValidationPipe())
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'file', maxCount: 2 }]))
   create(
+    @UploadedFiles() files: { file?: Express.Multer.File[] },
     @Body() createUserBookingDto: CreateUserBookingDto,
     @Res() response: Response,
   ) {
     const { validateOnlyTest } = createUserBookingDto;
-    if (validateOnlyTest) {
+
+    if (validateOnlyTest.toLowerCase() == 'true') {
       return response.status(200).send({ message: 'validationOk' });
     }
-    this.userBookingService.create(createUserBookingDto);
+    this.userBookingService.create(files, createUserBookingDto);
     return response
       .status(201)
       .send({ message: 'Short course booking completed!' });
